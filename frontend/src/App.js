@@ -5,6 +5,10 @@ import RecommendationList from './components/RecommendationList/RecommendationLi
 function App() {
   const [recommendations, setRecommendations] = useState([]);
 
+  const updateRecommendations = (newRecommendations) => {
+    setRecommendations(newRecommendations);
+  };
+
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col justify-center items-center">
       <h1 className="text-3xl font-bold mb-8">Recomendador de Produtos RD Station</h1>
@@ -14,7 +18,7 @@ function App() {
           Bem-vindo ao Recomendador de Produtos RD Station. Aqui você pode encontrar uma variedade de produtos da RD Station, cada um projetado para atender às necessidades específicas do seu negócio. De CRM a Marketing, de Conversas a Inteligência Artificial, temos uma solução para ajudar você a alcançar seus objetivos. Use o formulário abaixo para selecionar suas preferências e funcionalidades desejadas e receba recomendações personalizadas de produtos que melhor atendam às suas necessidades.           </p>
         </div>
         <div>
-          <Form setRecommendations={setRecommendations} />
+          <Form setRecommendations={updateRecommendations} />
         </div>
         <div>
           <RecommendationList recommendations={recommendations} />

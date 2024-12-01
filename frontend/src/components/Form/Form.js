@@ -6,13 +6,12 @@ import useForm from "../../hooks/useForm";
 import useRecommendations from "../../hooks/useRecommendations";
 
 function Form() {
-
   const { preferences, features, products } = useProducts();
 
   const { formData, handleChange } = useForm({
-    selectPreferences: [],
-    selectFeatures: [],
-    selectRecommendationType: "MultipleProducts",
+    selectedPreferences: [],
+    selectedFeatures: [],
+    selectedRecommendationType: "MultipleProducts",
   });
 
   const { getRecommendations, setRecommendations } = useRecommendations(products);
@@ -20,9 +19,23 @@ function Form() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const recommendations = getRecommendations(formData);
+    if (!formData || !products || products.length === 0) {
+      console.error("Formulário ou lista de produtos inválidos!");
+      return;
+    }
 
-    setRecommendations(recommendations);
+    try {
+      const recommendations = getRecommendations(formData);
+
+      if (!recommendations || (Array.isArray(recommendations) && recommendations.length === 0)) {
+        console.warn("Nenhuma recomendação encontrada!");
+        return;
+      }
+
+      setRecommendations(recommendations);
+    } catch (error) {
+      console.error("Erro ao gerar recomendações:", error);
+    }
   };
 
   return (
@@ -31,17 +44,17 @@ function Form() {
       onSubmit={handleSubmit}
     >
       <Preferences
-        preferences={preferences}
-        onPreferenceChange={(select) => handleChange("selectPreferences", select)}
+        preferences={Array.isArray(preferences) ? preferences : []}
+        onPreferenceChange={(selected) => handleChange("selectedPreferences", selected)}
       />
 
       <Features
-        features={features}
-        onFeatureChange={(select) => handleChange("selectFeatures", select)}
+        features={Array.isArray(features) ? features : []}
+        onFeatureChange={(selected) => handleChange("selectedFeatures", selected)}
       />
 
       <RecommendationType
-        onRecommendationTypeChange={(select) => handleChange("selectRecommendationType", select)}
+        onRecommendationTypeChange={(selected) => handleChange("selectedRecommendationType", selected)}
       />
 
       <SubmitButton text="Obter recomendação" />
