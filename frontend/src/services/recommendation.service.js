@@ -1,28 +1,35 @@
-// getRecommendations.js
+// recommendation.service.js
 
+/**
+ * Product recommendations based on selected preferences and functionalities.
+ *
+ * @param {Object} formData
+ * @param {Array} products
+ * @returns {Array|Object|null}
+ */
 const getRecommendations = (
-  formData = { selectPreferences: [], selectFeatures: [], recommendationType: "MultipleProducts" },
+  formData = { selectedPreferences: [], selectedFeatures: [], recommendationType: "MultipleProducts" },
   products = []
 ) => {
-  const { selectPreferences, selectFeatures, recommendationType } = formData;
+  // destructuring 
+  const { selectedPreferences, selectedFeatures, recommendationType } = formData;
 
-  // Filter products based on preferences and functionalities
-  const filteredProducts = products.filter(product => {
-    
-    // Checks all preferences are in the product
-    const checkPreferences = selectPreferences.every(preference => 
-      product.preferences.includes(preference)
-    );
+  const filteredProducts = products.filter((product) => {
+    // are valid arrays?
+    const productPreferences = Array.isArray(product.preferences) ? product.preferences : [];
+    const productFeatures = Array.isArray(product.features) ? product.features : [];
 
-    // Checks all features are in the product
-    const checkFeatures = selectFeatures.every(feature => 
-      product.features.includes(feature)
-    );
+    const validPreferences =
+      selectedPreferences.length === 0 ||
+      selectedPreferences.every((preference) => productPreferences.includes(preference));
 
-    return checkPreferences && checkFeatures;
+    const validFeatures =
+      selectedFeatures.length === 0 ||
+      selectedFeatures.every((feature) => productFeatures.includes(feature));
+
+    return validPreferences && validFeatures;
   });
 
-  // Return based on recommendationType
   if (recommendationType === "SingleProduct") {
     return filteredProducts.length > 0 ? filteredProducts[filteredProducts.length - 1] : null;
   }
